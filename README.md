@@ -33,3 +33,10 @@ I decided to go with the filtered api call, filtering based on route types 0 and
 So even though the run times are similar now, if the returned response gets much larger, processing time will increase more with the un-filtered call
 - easier to test: can unit test with fake small json blocks rather than having to try to mock out the larger response which could be quite varied
 - less prone to bugs: less data coming back so less room for potential decoding/parsing errors
+
+## Testing
+
+To run the unit tests, simply execute the following:
+1. cd to mbta-routes from command line
+2. add owner execution permission to the shell script: `chmod 0700 unit_test.sh`
+3. run `./unit_test.sh`
