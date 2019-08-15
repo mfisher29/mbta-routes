@@ -12,11 +12,9 @@ def get_subway_routes():
     for f in FILTERS:
         filter_str = f'{filter_str}{f},'
     response = get_routes_api_call(filter_str[:-1])
-    final_output = process_response(response)
-    if final_output:
-        logger.info(final_output)
+    # need to handle error (400 level) cases
+    outputs = process_response(response)
+    logger.info(outputs[0])
     end = time.time()
     logger.info(f"Total program time: {'%.5f'%(end-start)} (s)")
-
-
-get_subway_routes()
+    return outputs
