@@ -1,9 +1,8 @@
-import logger
-from get_subway_routes import get_subway_routes
 from config import API_URL_BASE
 import requests
-import time
 import asyncio
+import logger
+import time
 
 logger = logger.get_logger()
 
@@ -38,6 +37,8 @@ def get_subway_stop_data(route_list):
     end = time.time()
     logger.info(f"Total run time for problem 2: {'%.5f'%(end-start)} (s)\n")
 
+    return [stop_dict, connecting_stops]
+
 
 async def get_subway_stops_api_calls(loop, routes, stop_dict, stop_counts):
     try:
@@ -65,5 +66,3 @@ async def get_subway_stops_api_calls(loop, routes, stop_dict, stop_counts):
             return None  # data won't be accurate so exiting call loop
     # return stop_dict, stop_counts if i move this to another file (i.e. utils)
 
-# track start time here.... may need return value
-get_subway_stop_data(get_subway_routes()[1])
