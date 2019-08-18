@@ -59,6 +59,20 @@ Once the data was obtained with the api calls, two dictionaries were used to hou
 
 From here it was possible to calculate the desired outputs and display them on the command line.
 
+## Problem 3
+
+### Instructions
+
+To run the code for problem 3, follow the following steps:
+
+1. if not already completed, clone this repository: `git clone https://github.com/mfisher29/mbta-routes.git`
+2. cd to mbta-routes from command line
+3. add owner execution permission to the shell script: `chmod 0700 run_problem_3.sh`
+4. run `./run_problem_3.sh`
+
+### Solution details
+
+
 ## Testing
 
 To run the unit tests, simply execute the following:
