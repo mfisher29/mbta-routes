@@ -1,2 +1,2 @@
-API_URL_BASE = 'https://api-v3.mbta.com/routes'
+API_URL_BASE = 'https://api-v3.mbta.com/'
 FILTERS = [0, 1]

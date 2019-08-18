@@ -34,6 +34,31 @@ So even though the run times are similar now, if the returned response gets much
 - easier to test: can unit test with fake small json blocks rather than having to try to mock out the larger response which could be quite varied
 - less prone to bugs: less data coming back so less room for potential decoding/parsing errors
 
+## Problem 2
+
+### Instructions
+
+To run the code for problem 2, follow the following steps:
+
+1. if not already completed, clone this repository: `git clone https://github.com/mfisher29/mbta-routes.git`
+2. cd to mbta-routes from command line
+3. add owner execution permission to the shell script: `chmod 0700 run_problem_2.sh`
+4. run `./run_problem_2.sh`
+
+### Solution details
+
+The problem was solved by first calling the /stops endpoint for each route found in problem 1:
+
+Api call: `https://api-v3.mbta.com/stops?fields[stop]=name&include=route&filter[route]={route_id}`
+
+I was hoping there was a way to make just a single call to filter for all desired routes, but it appears that the api only allows for filtering by a single route at a time. So to mitigate delays due to multiple api calls (one for each route), I used the python asynchronous library, [asyncio](https://docs.python.org/3/library/asyncio.html), along with the [requests](https://2.python-requests.org/en/master/) library.
+
+Once the data was obtained with the api calls, two dictionaries were used to house the relevant data:
+1. stop_dict: a dictionary with stops as the keys and a list of routes they were on as the value. i.e. `{'Downtown Crossing': ['Red', 'Orange'], ...}`
+2. stop_counts: a dictionary with routes as the keys and the count of stops along that route as the value. i.e. `{'Green-B': 24, ...}`
+
+From here it was possible to calculate the desired outputs and display them on the command line.
+
 ## Testing
 
 To run the unit tests, simply execute the following:
