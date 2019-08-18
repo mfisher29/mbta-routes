@@ -30,7 +30,7 @@ I decided to go with the filtered api call, filtering based on route types 0 and
 - simplicity: with the filtered api call, it's clear what data the code is looking for and this is easier for a new developer to read and understand
 - modularity: by inputting the filters via a config file, the code can be changed easily to filter for other route types
 - scalability: in the un-filtered case, the amount of data returned could become very large at any time if the MBTA adds more data to their system.
-So even though the run times are similar now, if the returned response gets much larger, processing time will increase more with the un-filtered call
+So even though the run times are similar now, if the returned response gets much larger, processing time on the client side will have a larger increase with the un-filtered call
 - easier to test: can unit test with fake small json blocks rather than having to try to mock out the larger response which could be quite varied
 - less prone to bugs: less data coming back so less room for potential decoding/parsing errors
 
