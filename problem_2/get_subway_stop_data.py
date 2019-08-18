@@ -38,6 +38,8 @@ def get_subway_stop_data(route_list):
     end = time.time()
     logger.info(f"Total run time for problem 2: {'%.5f'%(end-start)} (s)\n")
 
+    return [stop_dict, connecting_stops]
+
 
 async def get_subway_stops_api_calls(loop, routes, stop_dict, stop_counts):
     try:
@@ -66,4 +68,4 @@ async def get_subway_stops_api_calls(loop, routes, stop_dict, stop_counts):
     # return stop_dict, stop_counts if i move this to another file (i.e. utils)
 
 # track start time here.... may need return value
-get_subway_stop_data(get_subway_routes()[1])
+# get_subway_stop_data(get_subway_routes()[1])
