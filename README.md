@@ -86,11 +86,11 @@ The key part of the code is the `check_connections` function, which handles case
 It then looks to see if the end stop is along any of the listed routes. If YES, a response is returned. If NO, the sequence is repeated to check for another connection, until we finally find a connecting stop that will allow us to get to the desired route which has our final destination stop.
 
 The code is structured to perform the following sequential tasks:
-- handle case sensitivity and validate input
-- checks for simple case where start and end stop are along the same route, if YES, response is returned
-	if NO, continue through code
-- checks if starting stop appears on only 1 route, if YES, call the check_connections function, response is returned
-	if NO, (starting stop has more than 1 route), call the check_connections function and append all possible routes to a list and determine the shortest route out of the available options, response is returned
+- Handle case sensitivity and validate input
+- Checks for simple case where start and end stop are along the same route, if YES, response is returned - if NO, continue through code
+- Checks if starting stop appears on only 1 route, if YES, call the check_connections function, response is returned
+- If starting stop belongs to more than 1 route, call the check_connections function and append all possible routes to a list
+- Determines the shortest route out of the available options. If routes are equivalent the route is chosen randomly, response is returned
 
 
 ## Testing
