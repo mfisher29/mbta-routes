@@ -2,7 +2,6 @@ import logger
 from get_subway_stop_data import get_subway_stop_data
 from get_subway_routes import get_subway_routes
 import random
-import time
 
 logger = logger.get_logger()
 
@@ -130,9 +129,4 @@ def check_connections(stop_dict, connection_dict, start_stop, end_stop, current_
                         continue
 
 
-starting_stop = input("Please enter starting point station: ")
-ending_stop = input("Please enter your final destination: ")
-start_time = time.time()
-logger.info(route_planner(starting_stop, ending_stop))
-end_time = time.time()
-logger.info(f"Total run time for problem 3: {'%.5f'%(end_time-start_time)} (s)\n")
+
