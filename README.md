@@ -3,8 +3,8 @@
 ## Description
 Some python code to interface with the publicly accessible MBTA API.
 
-## Languages
-Python 3.6
+## Dependencies
+Python 3.6 - or [latest release](https://www.python.org/downloads/)
 
 ## Problem 1
 
@@ -95,7 +95,18 @@ The code is structured to perform the following sequential tasks:
 
 ## Testing
 
+### unit tests
+
 To run the unit tests, simply execute the following:
 1. cd to mbta-routes from command line
 2. add owner execution permission to the shell script: `chmod 0700 unit_test.sh`
 3. run `./unit_test.sh`
+
+### integration tests
+
+To run the integration tests, simply execute the following:
+1. cd to mbta-routes from command line
+2. add owner execution permission to the shell script: `chmod 0700 integration_test.sh`
+3. run `./integration_test.sh`
+
+** Note: the integration tests have sleeps inserted to prevent rate-limiting errors. They will take a couple minutes to run.

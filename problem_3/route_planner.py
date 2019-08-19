@@ -12,7 +12,12 @@ def route_planner(start, end):
     end = end.lower()
 
     # passing in route list from problem 1 to get_subway_stop_data from problem 2 in order to retrieve needed data
-    [stop_dict, connecting_stop_dict] = get_subway_stop_data(get_subway_routes()[1])
+    response = get_subway_routes()
+    if response is not None:
+        routes = response[1]
+        [stop_dict, connecting_stop_dict] = get_subway_stop_data(routes)
+    else:
+        return 'Leading API call failed, wait and try again.'
 
     # convert all dict keys to lower case to remove case sensitivity of input
     stop_dict = dict((k.lower(), v) for k, v in stop_dict.items())
@@ -24,7 +29,7 @@ def route_planner(start, end):
         # first check for simple case where stops are on the same route
         for route in stop_dict[start]:
             if route in stop_dict[end]:
-                return f'{start.capitalize()} --> {end.capitalize()}: {route}'
+                return f'Answer: {start.capitalize()} --> {end.capitalize()}: {route}'
 
         # if no value is returned will proceed to this case:
         # determine route for stop, check for connecting stops along that line

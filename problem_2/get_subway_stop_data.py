@@ -9,6 +9,9 @@ logger = logger.get_logger()
 
 def get_subway_stop_data(route_list):
     start = time.time()
+    if route_list is None:
+        logger.warning('No input given')
+        return None
     stop_dict = {}
     stop_counts_dict = {}
     loop = asyncio.get_event_loop()
@@ -45,16 +48,20 @@ async def get_subway_stops_api_calls(loop, routes, stop_dict, stop_counts):
     for response in await asyncio.gather(*futures):
         if response.status_code == 200:
             json_resp = response.json()
-            route = json_resp['data'][0]['relationships']['route']['data']['id']  # just need 1st element to get route
-            stop_counts[route] = len(json_resp['data'])
+            if json_resp['data']:
+                route = json_resp['data'][0]['relationships']['route']['data']['id']  # just need 1st element to get route
+                stop_counts[route] = len(json_resp['data'])
 
-            for stop in json_resp['data']:
-                stop_name = stop['attributes']['name']
-                if stop_name in stop_dict:
-                    stop_dict[stop_name].append(route)
-                else:
-                    stop_dict[stop_name] = [route]
-            pass
+                for stop in json_resp['data']:
+                    stop_name = stop['attributes']['name']
+                    if stop_name in stop_dict:
+                        stop_dict[stop_name].append(route)
+                    else:
+                        stop_dict[stop_name] = [route]
+                pass
+            else:
+                logger.error(f'No json data to read, possible bad request: {routes}')
+                return None
         else:
             logger.error(f'API call failed with code {response.status_code} : {response.text}')
             return None  # data won't be accurate if an error is thrown for a given api call, so exiting call loop
