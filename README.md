@@ -57,7 +57,7 @@ I was hoping there was a way to make just a single call to filter for all desire
 
 Once the data was obtained with the api calls, two dictionaries were used to house the relevant data:
 1. stop_dict: a dictionary with stops as the keys and a list of routes they were on as the value. i.e. `{'Downtown Crossing': ['Red', 'Orange'], ...}`
-2. stop_counts: a dictionary with routes as the keys and the count of stops along that route as the value. i.e. `{'Green-B': 24, ...}`
+2. stop_counts_dict: a dictionary with routes as the keys and the count of stops along that route as the value. i.e. `{'Green-B': 24, ...}`
 
 From here it was possible to calculate the desired outputs and display them on the command line.
 

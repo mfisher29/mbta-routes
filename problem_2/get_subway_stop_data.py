@@ -10,34 +10,28 @@ logger = logger.get_logger()
 def get_subway_stop_data(route_list):
     start = time.time()
     stop_dict = {}
-    stop_counts = {}
+    stop_counts_dict = {}
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(get_subway_stops_api_calls(loop, route_list, stop_dict, stop_counts))
+    loop.run_until_complete(get_subway_stops_api_calls(loop, route_list, stop_dict, stop_counts_dict))
 
     # if there is no data in the dict, that means the api calls failed, so exit program
     # could implement some retry logic here with a short sleep to prevent 429 error again
-    if stop_counts == {}:
+    if stop_counts_dict == {}:
         return None
 
-    # part 1: route with most stops & number of stops
-    max_stops_route = max(stop_counts, key=stop_counts.get)
-    logger.info(f"Route with most stops: {max_stops_route}, Stops: {stop_counts[max_stops_route]}")
-
-    # part 2: route with least stops & number of stops
-    min_stops_route = min(stop_counts, key=stop_counts.get)
-    logger.info(f"Route with least stops: {min_stops_route}, Stops: {stop_counts[min_stops_route]}")
+    # part 1 and 2: find max and min stops
+    max_min_dict = get_max_min_stops(stop_counts_dict)
+    logger.info(f"Route with most stops: {max_min_dict['max']}, Stops: {stop_counts_dict[max_min_dict['max']]}")
+    logger.info(f"Route with least stops: {max_min_dict['min']}, Stops: {stop_counts_dict[max_min_dict['min']]}")
 
     # part 3: display stops that connect two or more subway routes and the route names
-    connecting_stops = {}
-    for stop in stop_dict:
-        if len(stop_dict[stop]) > 1:
-            connecting_stops[stop] = stop_dict[stop]
-    logger.info(f"Connecting stops: {connecting_stops}")
+    connecting_stops_dict = get_connecting_stops(stop_dict)
+    logger.info(f"Connecting stops: {connecting_stops_dict}")
 
     end = time.time()
     logger.info(f"Total run time for problem 2: {'%.5f'%(end-start)} (s)\n")
 
-    return [stop_dict, connecting_stops]
+    return [stop_dict, connecting_stops_dict]
 
 
 async def get_subway_stops_api_calls(loop, routes, stop_dict, stop_counts):
@@ -63,6 +57,23 @@ async def get_subway_stops_api_calls(loop, routes, stop_dict, stop_counts):
             pass
         else:
             logger.error(f'API call failed with code {response.status_code} : {response.text}')
-            return None  # data won't be accurate so exiting call loop
-    # return stop_dict, stop_counts if i move this to another file (i.e. utils)
+            return None  # data won't be accurate if an error is thrown for a given api call, so exiting call loop
+
+
+def get_max_min_stops(stop_counts):
+    # part 1: route with most stops & number of stops
+    max_stops_route = max(stop_counts, key=stop_counts.get)
+
+    # part 2: route with least stops & number of stops
+    min_stops_route = min(stop_counts, key=stop_counts.get)
+
+    return {'max': max_stops_route, 'min': min_stops_route}
+
+
+def get_connecting_stops(stops):
+    connecting_stops = {}
+    for stop in stops:
+        if len(stops[stop]) > 1:
+            connecting_stops[stop] = stops[stop]
+    return connecting_stops
 

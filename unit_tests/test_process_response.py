@@ -2,7 +2,7 @@ import sys
 import json
 import unittest
 sys.path.append("../problem_1")
-from utils import process_response
+from get_subway_routes import process_response
 
 
 class TestProcessResponse(unittest.TestCase):
@@ -14,10 +14,13 @@ class TestProcessResponse(unittest.TestCase):
 
     def test_valid_response(self):
         response_dict = self.get_test_file('test_files/response_valid.json')
-        final_output = process_response(response_dict)
-        expected_routes = ['Red Line', 'Orange Line']
+        [output_str, output_list] = process_response(response_dict)
+        expected_long_names = ['Red Line', 'Orange Line']
+        expected_routes = ['Red', 'Orange']
+        for route in expected_long_names:
+            self.assertIn(route, output_str)
         for route in expected_routes:
-            self.assertIn(route, final_output)
+            self.assertIn(route, output_list)
 
     def test_no_long_name(self):
         response_dict = self.get_test_file('test_files/response_invalid.json')
