@@ -19,7 +19,7 @@ For Unix (MAC) machines:
 4. run `./run_problem_1.sh`
 
 For non-Unix machines:
-1. if not already completed, clone this repository: `git clone https://github.com/mfisher29/mbta-routes.git`
+1. clone this repository: `git clone https://github.com/mfisher29/mbta-routes.git`
 2. cd to mbta-routes from command line
 3. run:
 ```
@@ -139,9 +139,6 @@ You will notice problems 1 and 2 also run upon executing the shell script. This 
 
 There is probably an easier way to retrieve route stops and recommended trips though the API, but I wanted to try to solve it based on the data I already had collected from the API calls in problems 1 and 2.
 
-Currently the algorithm handles up to 2 subway transfers. To allow it to handle N subway transfers, this
-algorithm could be improved upon by turning it into a recursive function for cases where more than 1 connection is necessary.
-
 The key part of the code is the `check_connections` function, which handles cases where a rider must transfer between 1 or more routes to get to their end stop. It first finds a potential connecting stop from the connecting_stops dictionary from problem 2:
 `{'Park Street': ['Red', 'Green-C', ...], 'State': ['Orange', 'Blue'], ... }`
 It then looks to see if the end stop is along any of the listed routes. If YES, a response is returned. If NO, the sequence is repeated to check for another connection, until we finally find a connecting stop that will allow us to get to the desired route which has our final destination stop.
@@ -149,9 +146,11 @@ It then looks to see if the end stop is along any of the listed routes. If YES, 
 The code is structured to perform the following sequential tasks:
 - Handle case sensitivity and validate input
 - Checks for simple case where start and end stop are along the same route, if YES, response is returned - if NO, continue through code
-- Checks if starting stop appears on only 1 route, if YES, call the check_connections function, response is returned
-- If starting stop belongs to more than 1 route, call the check_connections function and append all possible routes to a list
-- Determines the shortest route out of the available options. If routes are equivalent the route is chosen randomly, response is returned
+- Call the check_connections function and append all possible routes to a list
+- Determines the shortest route out of the available options. If routes are equivalent the first route in the list is chosen, response is returned
+
+Currently the algorithm handles up to 2 subway transfers. To allow it to handle N subway transfers, this
+algorithm could be improved upon by turning check_connections into a recursive function. The way it is solved now is a bit messy but shows my stream of thoughts. It also fails for the case where you need to transfer more than twice (i.e. Mattapan --> Bowdoin where you need to transfer between Mattapan, Red, Orange/Green, and Blue).
 
 
 ## Testing
