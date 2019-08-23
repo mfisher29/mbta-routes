@@ -137,7 +137,7 @@ You will notice problems 1 and 2 also run upon executing the shell script. This 
 
 ### Solution details
 
-There is probably an easier way to retrieve route stops and recommended trips though the API, but I wanted to try to solve it based on the data I already had collected from the API calls in problems 1 and 2.
+There is probably an easier way to retrieve route stops and recommended trips though the API, like the stop longitude and latitudes that are available. However in this case I wanted to try to solve it based on the data I already had collected from the API calls in problems 1 and 2. 
 
 The key part of the code is the `check_connections` function, which handles cases where a rider must transfer between 1 or more routes to get to their end stop. It first finds a potential connecting stop from the connecting_stops dictionary from problem 2:
 `{'Park Street': ['Red', 'Green-C', ...], 'State': ['Orange', 'Blue'], ... }`
