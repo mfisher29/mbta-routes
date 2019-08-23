@@ -1,21 +1,19 @@
 import logger
 from get_subway_stop_data import get_subway_stop_data
 from get_subway_routes import get_subway_routes
-import random
 
 logger = logger.get_logger()
 
 
 def route_planner(start, end):
-    # handle case sensitivity
     start = start.lower()
     end = end.lower()
 
-    # passing in route list from problem 1 to get_subway_stop_data from problem 2 in order to retrieve needed data
+    # calling fxns from problems 1 & 2 to generate a dict of all stops and a dict of all connecting stops
     response = get_subway_routes()
     if response is not None:
-        routes = response[1]
-        [stop_dict, connecting_stop_dict] = get_subway_stop_data(routes)
+        all_routes_list = response[1]
+        [stop_dict, connecting_stop_dict] = get_subway_stop_data(all_routes_list)
     else:
         return 'Leading API call failed, wait and try again.'
 
@@ -23,7 +21,7 @@ def route_planner(start, end):
     stop_dict = dict((k.lower(), v) for k, v in stop_dict.items())
     connecting_stop_dict = dict((k.lower(), v) for k, v in connecting_stop_dict.items())
 
-    # validate inputs, ensure they are actually valid subway stops
+    # validate inputs, ensure they are actually valid subway stop names
     if start in stop_dict and end in stop_dict:
 
         # first check for simple case where stops are on the same route
@@ -31,48 +29,27 @@ def route_planner(start, end):
             if route in stop_dict[end]:
                 return f'Answer: {start.capitalize()} --> {end.capitalize()}: {route}'
 
-        # if no value is returned will proceed to this case:
-        # determine route for stop, check for connecting stops along that line
-        # check if final stop is on the other route
+        # if no value is returned will proceed to find all potential connecting routes
+        potential_routes = []
+        for route in stop_dict[start]:
+            # add route list to list of potential routes (list of lists)
+            potential_routes.append(check_connections(stop_dict, connecting_stop_dict, start, end, route))
+            logger.debug(f'List of potential routes: {potential_routes}')
 
-        # if starting point only has 1 route, we know we need to look for connections along that route
-        if len(stop_dict[start]) == 1:
-            route_ls = []
-            curr_route = stop_dict[start][0]
-            route_ls = check_connections(stop_dict, connecting_stop_dict, start, end, curr_route, route_ls)
-            route_str = ', '.join(route_ls)
-            return f'Answer: {start.capitalize()} --> {end.capitalize()}: {route_str}'
+        # find shortest route (least transfers), initiate with first choice from potential routes
+        shortest_route = potential_routes[0]
+        for rail_route in potential_routes:
+            if len(rail_route) < len(shortest_route):
+                shortest_route = rail_route
 
-        # need to handle connection cases where the starting point has more than 1 possible route
-        else:
-            # find all potential routes, return the shortest one
-            potential_routes = []
-            for route in stop_dict[start]:
-                rt_list = []
-
-                # add route list to list of potential routes (list of lists)
-                # find route list with fewest elements, that is the optimal answer
-                potential_routes.append(check_connections(stop_dict, connecting_stop_dict, start, end, route, rt_list))
-                logger.debug(f'List of potential routes: {potential_routes}')
-
-            # find minimum length route list (least transfers)
-            # initiate with random choice from potential routes
-            # this could be improved by checking the longitudes and latitudes with another api call, or altering the
-            # current api call, to find stops that are at the shortest distances between each other
-            # for now, just deciding based on least # of stops. If equal # of stops, the decision will be random
-            shortest_rt = random.choice(potential_routes)
-            for rail_route in potential_routes:
-                if len(rail_route) < len(shortest_rt):
-                    shortest_rt = rail_route
-
-            route_str = ', '.join(shortest_rt)
-            return f'Answer: {start.capitalize()} --> {end.capitalize()}: {route_str}'
-
+        route_str = ', '.join(shortest_route)
+        return f'Answer: {start.capitalize()} --> {end.capitalize()}: {route_str}'
     else:
         return f'Invalid subway stops: {start.capitalize()}, {end.capitalize()}'
 
 
-def check_connections(stop_dict, connection_dict, start_stop, end_stop, current_route, route_list):
+def check_connections(stop_dict, connection_dict, start_stop, end_stop, current_route):
+    route_list = []
     for stop in connection_dict:
         # check if the starting route is in the list of routes for the connecting stop
         if current_route in connection_dict[stop]:
@@ -92,15 +69,9 @@ def check_connections(stop_dict, connection_dict, start_stop, end_stop, current_
     # check for secondary connection, start over since we don't want to miss stops that we already looped through
     logger.debug('No direct connection, looking for additional transfer...')
 
-    end_routes = stop_dict[end_stop]
-
     for connection_stop_1 in connection_dict:
-        # account for r = Mattapan case, really this should extend the algorithm to a 3rd round of connection checks,
-        # but it's basically still the red line, so mapping it to red line
-        if 'Mattapan' in stop_dict[start_stop]:
-            current_route = 'Red'
-        else:
-            current_route = stop_dict[start_stop][0]
+        # set current route to route that starting stop is on
+        current_route = stop_dict[start_stop][0]
         # check if connecting stop is along original route
         if current_route in connection_dict[connection_stop_1]:
             logger.debug(f'2. Found a potential connection: {connection_stop_1}')
@@ -116,11 +87,7 @@ def check_connections(stop_dict, connection_dict, start_stop, end_stop, current_
                         if connection_stop_1 == connection_stop_2 or connection_stop_2 == start_stop:
                             continue  # pass over case of first connection and start stop, don't want to go backwards
 
-                        for r in end_routes:  # in case there is more than 1 end route
-                            # account for r = Mattapan case, really this should extend the algorithm
-                            # but it's basically still the red line, so mapping it to red line
-                            if r == 'Mattapan':
-                                r = 'Red'
+                        for r in stop_dict[end_stop]:  # in case there is more than 1 end route
                             # check if end route (r) is in the list of routes for the connecting stop
                             if r in connection_dict[connection_stop_2]:
                                 route_list.append(current_route)
@@ -130,8 +97,3 @@ def check_connections(stop_dict, connection_dict, start_stop, end_stop, current_
                             else:
                                 # end route is not in list of connecting stop routes, continue
                                 continue
-                        # looped through potential end routes and didn't find a match, continue
-                        continue
-
-
-
